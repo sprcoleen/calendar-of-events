@@ -14,7 +14,7 @@ const authStore = useAuthStore()
 
 const ICONS = {
   heart: '❤️', star: '⭐', cake: '🎂',
-  pencil: '✏️', cd: '💿', earth: '🌍',
+  pencil: '✏️', cd: '💿', earth: '🌍', firework: '🎆',
 }
 
 const formattedDate = computed(() => {
