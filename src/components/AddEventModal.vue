@@ -1,10 +1,11 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useEventsStore } from '../stores/events'
 
 const props = defineProps({
   date: { type: String, default: null }, // pre-filled date 'YYYY-MM-DD'
   show: { type: Boolean, default: false },
+  event: { type: Object, default: null }, // if set, modal is in edit mode
 })
 
 const emit = defineEmits(['close'])
@@ -27,13 +28,22 @@ const selectedIcon = ref('star')
 const textError = ref(false)
 const saving = ref(false)
 
-// Pre-fill date whenever the modal opens
+const isEditMode = computed(() => !!props.event)
+
+// Pre-fill fields whenever the modal opens
 watch(() => props.show, (val) => {
   if (val) {
-    selectedDate.value = props.date || ''
-    eventText.value = ''
-    recurring.value = false
-    selectedIcon.value = 'star'
+    if (props.event) {
+      selectedDate.value = props.event.date || ''
+      eventText.value = props.event.text || ''
+      recurring.value = props.event.recurring || false
+      selectedIcon.value = props.event.icon || 'star'
+    } else {
+      selectedDate.value = props.date || ''
+      eventText.value = ''
+      recurring.value = false
+      selectedIcon.value = 'star'
+    }
     textError.value = false
   }
 })
@@ -47,12 +57,17 @@ async function handleSave() {
 
   saving.value = true
   try {
-    await eventsStore.addEvent({
+    const payload = {
       date: selectedDate.value,
       text: eventText.value.trim(),
       recurring: recurring.value,
       icon: selectedIcon.value,
-    })
+    }
+    if (isEditMode.value) {
+      await eventsStore.updateEvent(props.event.id, payload)
+    } else {
+      await eventsStore.addEvent(payload)
+    }
     emit('close')
   } finally {
     saving.value = false
@@ -69,7 +84,7 @@ function handleClose() {
     <div v-if="show" class="overlay" @click.self="handleClose">
       <div class="modal" role="dialog" aria-modal="true" aria-labelledby="add-event-title">
         <div class="modal-header">
-          <h2 id="add-event-title">Add Event</h2>
+          <h2 id="add-event-title">{{ isEditMode ? 'Edit Event' : 'Add Event' }}</h2>
           <button class="close-btn" @click="handleClose" aria-label="Close">✕</button>
         </div>
 
@@ -121,7 +136,7 @@ function handleClose() {
         <div class="modal-footer">
           <button class="btn btn-secondary" @click="handleClose">Cancel</button>
           <button class="btn btn-primary" :disabled="saving" @click="handleSave">
-            {{ saving ? 'Saving…' : 'Save Event' }}
+            {{ saving ? 'Saving…' : isEditMode ? 'Save Changes' : 'Save Event' }}
           </button>
         </div>
       </div>

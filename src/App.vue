@@ -16,6 +16,7 @@ const selectedDate = ref(null)
 const showLoginModal = ref(false)
 const showAddModal = ref(false)
 const addEventDate = ref(null)
+const editingEvent = ref(null)
 
 onMounted(() => eventsStore.fetchEvents())
 
@@ -35,6 +36,12 @@ function openAddEvent(date) {
 function closeAddModal() {
   showAddModal.value = false
   addEventDate.value = null
+  editingEvent.value = null
+}
+
+function openEditEvent(event) {
+  editingEvent.value = event
+  showAddModal.value = true
 }
 </script>
 
@@ -73,6 +80,7 @@ function closeAddModal() {
       :date="selectedDate"
       @close="closeEventsModal"
       @add-event="openAddEvent"
+      @edit-event="openEditEvent"
     />
 
     <AdminLoginModal
@@ -83,6 +91,7 @@ function closeAddModal() {
     <AddEventModal
       :show="showAddModal"
       :date="addEventDate"
+      :event="editingEvent"
       @close="closeAddModal"
     />
   </div>
