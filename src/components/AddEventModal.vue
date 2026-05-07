@@ -13,12 +13,13 @@ const emit = defineEmits(['close'])
 const eventsStore = useEventsStore()
 
 const ICON_OPTIONS = [
-  { key: 'heart',  emoji: '❤️' },
-  { key: 'star',   emoji: '⭐' },
-  { key: 'cake',   emoji: '🎂' },
-  { key: 'pencil', emoji: '✏️' },
-  { key: 'cd',     emoji: '💿' },
-  { key: 'earth',  emoji: '🌍' },
+  { key: 'heart',    emoji: '❤️' },
+  { key: 'star',     emoji: '⭐' },
+  { key: 'cake',     emoji: '🎂' },
+  { key: 'pencil',   emoji: '✏️' },
+  { key: 'cd',       emoji: '💿' },
+  { key: 'earth',    emoji: '🌍' },
+  { key: 'firework', emoji: '🎆' },
 ]
 
 const selectedDate = ref('')
