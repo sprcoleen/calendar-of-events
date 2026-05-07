@@ -7,7 +7,7 @@ const props = defineProps({
   date: { type: String, default: null }, // 'YYYY-MM-DD'
 })
 
-const emit = defineEmits(['close', 'add-event'])
+const emit = defineEmits(['close', 'add-event', 'edit-event'])
 
 const eventsStore = useEventsStore()
 const authStore = useAuthStore()
@@ -56,6 +56,12 @@ async function handleDelete(id) {
               <span class="ev-icon">{{ ICONS[ev.icon] || '📌' }}</span>
               <span class="ev-text">{{ ev.text }}</span>
               <span v-if="ev.recurring" class="recurring-badge">↻ Recurring</span>
+              <button
+                v-if="authStore.isAdmin"
+                class="edit-btn"
+                @click="emit('edit-event', ev)"
+                aria-label="Edit event"
+              >✎</button>
               <button
                 v-if="authStore.isAdmin"
                 class="delete-btn"
@@ -176,6 +182,19 @@ async function handleDelete(id) {
   font-weight: 600;
   white-space: nowrap;
 }
+
+.edit-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #4f46e5;
+  font-size: .9rem;
+  padding: .25rem .4rem;
+  border-radius: .25rem;
+  opacity: .7;
+  transition: opacity .12s;
+}
+.edit-btn:hover { opacity: 1; background: #eef2ff; }
 
 .delete-btn {
   background: none;

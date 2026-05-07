@@ -53,5 +53,18 @@ export const useEventsStore = defineStore('events', () => {
     events.value = events.value.filter(e => e.id !== id)
   }
 
-  return { events, loading, error, fetchEvents, getEventsForDate, addEvent, deleteEvent }
+  async function updateEvent(id, { date, text, recurring, icon }) {
+    const { data, error: err } = await supabase
+      .from('events')
+      .update({ date, text, recurring, icon })
+      .eq('id', id)
+      .select()
+      .single()
+    if (err) throw new Error(err.message)
+    const idx = events.value.findIndex(e => e.id === id)
+    if (idx !== -1) events.value[idx] = data
+    return data
+  }
+
+  return { events, loading, error, fetchEvents, getEventsForDate, addEvent, deleteEvent, updateEvent }
 })
